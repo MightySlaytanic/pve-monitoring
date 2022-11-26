@@ -171,6 +171,18 @@ Measurements for host pve
 ]
 ```
 
+## Scheduling data upload
+
+I've put the two scripts in the following */etc/cron.d/influx_stats* crontab file in order to upload stats every minute:
+
+```bash
+# Upload stats to InfluxDB2
+
+* * * * * root /root/scripts/pve_disks_stats_to_influxdb2.sh >/dev/null 2>&1
+
+* * * * * root /root/scripts/pve_temp_stats_to_influxdb2.sh >/dev/null 2>&1
+```
+
 ## Grafana Dashboard Example
 
 Once you have your data on influxdb2, you can build your Grafana Dashboard and keep an eye on the health of your PVE box. 
