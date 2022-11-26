@@ -9,7 +9,7 @@ This script retrieves data from sata disks using smartctl and from nvme disks vi
 You can modify the DEVICES dictionary by changing the path of the sata or nvme disk or by removing one of the two entries.
 At present time only one disk per type is supported (you can not add a second SATA or NVME disk without changing the code.
 
-## pve_temp_stats_to_influxdb2.py
+## pve_temp_stats_to_influxdb2.py
 
 This script uses the lm_sensors command to retrieve temperature info from the device. It has ben tailored for the output of the command executed on an Intel NUC i7 10th Gen device, so it may not work for your device without proper changes to the code
 
@@ -171,7 +171,7 @@ Measurements for host pve
 ]
 ```
 
-## Grafana Dashboard Example
+## Grafana Dashboard Example
 
 Once you have your data on influxdb2, you can build your Grafana Dashboard and keep an eye on the health of your PVE box. 
 You can also add alarms to warn you about high temperatures, low disk space available etc. Remember to configure your
