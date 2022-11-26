@@ -41,8 +41,11 @@ export INFLUX_BUCKET="influx_bucket"
 export INFLUX_TOKEN="influx_token"
 export HOST_TAG="measurements_host_tag"
 
-# I've introduced the following variables since my NVME disk was bought from another person and had a lot of read/written TBs
-# This variables hold the amount of read/written bytes the day I've received it, so I can know the amount of data read/written by myself.
+# I've introduced the following variables since my NVME disk was bought from another person 
+# and had a lot of read/written TBs.
+# This variables hold the amount of read/written bytes the day I've received it, so I can know 
+# the amount of data read/written by myself. 
+# If your drive is new, set it to 0.
 export DATA_UNITS_READ_BASE="648_295_927_296_000"
 export DATA_UNITS_WRITTEN_BASE="600_140_255_744_000"
 
