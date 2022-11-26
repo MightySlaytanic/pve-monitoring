@@ -35,7 +35,7 @@ You can directly edit the python script or you can build a bash wrapper like the
 #!/bin/bash
 
 export INFLUX_HOST="influx_IP_or_DNS"
-export INFLUX_PORT=8086
+export INFLUX_PORT="influx_PORT"
 export INFLUX_ORGANIZATION="influx_organization"
 export INFLUX_BUCKET="influx_bucket"
 export INFLUX_TOKEN="influx_token"
@@ -58,7 +58,7 @@ python3 /path-to-the-script/pve_disks_stats_to_influxdb2.py $*
 #!/bin/bash
 
 export INFLUX_HOST="influx_IP_or_DNS"
-export INFLUX_PORT=8086
+export INFLUX_PORT="influx_PORT"
 export INFLUX_ORGANIZATION="influx_organization"
 export INFLUX_BUCKET="influx_bucket"
 export INFLUX_TOKEN="influx_token"
