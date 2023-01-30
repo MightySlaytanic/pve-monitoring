@@ -3,6 +3,14 @@ Proxmox VE temperature and disk-health stats upload to influxdb2
 
 **DISCLAIMER**: this tool has been developed to monitor my own Intel NUC with a SATA and an NVME disk. You can freely use and modify it to your needs, but I hold no responsibility if not used properly. 
 
+## Requirements
+
+The script requires the module influxdb-client to be installed with pip:
+
+```bash
+pip install influxdb-client
+```
+
 ## pve_disks_stats_to_influxdb2.py
 
 This script retrieves data from sata disks using smartctl and from nvme disks via nvmcli tools.
