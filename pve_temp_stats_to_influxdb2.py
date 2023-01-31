@@ -5,7 +5,8 @@ import sys
 import json
 import argparse
 from datetime import datetime
-from os import popen,getenv
+from os import getenv
+from subprocess import run,PIPE
 
 from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
@@ -35,7 +36,7 @@ if __name__ == '__main__':
     measurements = []
     stats = {}
 
-    data = json.load(popen("/usr/bin/sensors -j"))
+    data = json.loads(run(["/usr/bin/sensors -j"], stdout=PIPE, stderr=None, text=True, shell=True).stdout)
 
     stats["cpu-package"] = int(data["coretemp-isa-0000"]["Package id 0"]["temp1_input"])  
 

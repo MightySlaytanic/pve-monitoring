@@ -5,7 +5,8 @@ import sys
 import json
 import argparse
 from datetime import datetime
-from os import popen,getenv
+from os import getenv
+from subprocess import run,PIPE
 
 from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
@@ -43,41 +44,40 @@ if __name__ == '__main__':
 
         if devtype == "nvme":
             stats = {}
-            output_stream = popen(f"/usr/sbin/nvme smart-log {devpath}")
+            output = run([f"/usr/sbin/nvme smart-log {devpath}"], stdout=PIPE, stderr=None, text=True, shell=True).stdout.split("\n")
 
-            for line in output_stream:
-                match_found = re.match(r".*Smart Log.*|^[^_]+$", line)
-                temperature_found = re.match(r".*temperature.*", line)
+            for line in output:
+                if len(line) > 0:
+                    match_found = re.match(r".*Smart Log.*|^[^_]+$", line)
+                    temperature_found = re.match(r".*temperature.*", line)
 
-                if not match_found or temperature_found:
-                    key, value = line.strip().split(":")
-                    key = key.strip()
-                    value = value.strip().replace(",","")
-                    value = value.strip().replace("%","")
+                    if not match_found or temperature_found:
+                        key, value = line.strip().split(":")
+                        key = key.strip()
+                        value = value.strip().replace(",","")
+                        value = value.strip().replace("%","")
 
-                    if temperature_found:
-                        value, _ = value.split(" ") 
-                    
-                    if value.isnumeric():
-                        value = int(value)
+                        if temperature_found:
+                            value, _ = value.split(" ") 
+                        
+                        if value.isnumeric():
+                            value = int(value)
 
-                    match_found = re.match(r"data_units_read|data_units_written",key)
+                        match_found = re.match(r"data_units_read|data_units_written",key)
 
-                    if match_found:
-                        # data_units_read/written is in thousands of 512 bytes blocks
-                        value = value * 512000
+                        if match_found:
+                            # data_units_read/written is in thousands of 512 bytes blocks
+                            value = value * 512000
 
-                        if key == "data_units_read":
-                            stats["data_units_read_from_day1"] = value
-                            value = value - DATA_UNITS_READ_BASE
+                            if key == "data_units_read":
+                                stats["data_units_read_from_day1"] = value
+                                value = value - DATA_UNITS_READ_BASE
 
-                        if key == "data_units_written":
-                            stats["data_units_written_from_day1"] = value
-                            value = value - DATA_UNITS_WRITTEN_BASE
-                    
-                    stats[key.lower()] = value
-
-            output_stream.close()
+                            if key == "data_units_written":
+                                stats["data_units_written_from_day1"] = value
+                                value = value - DATA_UNITS_WRITTEN_BASE
+                        
+                        stats[key.lower()] = value
 
             measurements.append({
                 "measurement": "disks",
@@ -87,17 +87,16 @@ if __name__ == '__main__':
 
         elif devtype == "sata":
             stats = {}
-            output_stream = popen(f"/usr/sbin/smartctl -A {devpath}")
+            output = run([f"/usr/sbin/smartctl -A {devpath}"], stdout=PIPE, stderr=None, text=True, shell=True).stdout.split("\n")
 
-            for line in output_stream:
-                # Line sample:
-                #   1 Raw_Read_Error_Rate     0x002f   100   100   000    Pre-fail  Always       -       0
-                match_found = re.match(r"^\s*[0-9]+\s+([^\s]+).*\s-\s+([^\s]+).*", line)
+            for line in output:
+                if len(line) > 0:
+                    # Line sample:
+                    #   1 Raw_Read_Error_Rate     0x002f   100   100   000    Pre-fail  Always       -       0
+                    match_found = re.match(r"^\s*[0-9]+\s+([^\s]+).*\s-\s+([^\s]+).*", line)
 
-                if match_found:
-                    stats[match_found.group(1).lower()] = int(match_found.group(2))
-
-            output_stream.close()
+                    if match_found:
+                        stats[match_found.group(1).lower()] = int(match_found.group(2))
 
             measurements.append({
                 "measurement": "disks",
