@@ -43,8 +43,9 @@ You can either set these directly in Bash (below #1), or directly editing each s
 | INFLUX_ORGANIZATION | Your InfluxDB Org Name |
 | INFLUX_BUCKET | Your InfluxDB Bucket Name |
 | HOST_TAG | The name of your PVE Host |
-| DATA_UNITS_READ_BASE | OPTIONAL - You can get this stat from the following `smartctl -a /dev/nvme0n1`, however if you do not care about your own stats, just the lifetime of the drive, set to `0` |
-| DATA_UNITS_WRITTEN_BASE | OPTIONAL - You can get this stat from the following `smartctl -a /dev/nvme0n1`, however if you do not care about your own stats, just the lifetime of the drive, set to `0` |
+| DATA_UNITS_READ_BASE | Set it to the read bytes if you want to count read bytes from a non zero value. Otherwise set it to 0. Ex: 300_000_000_000 is 300GB |
+| DATA_UNITS_WRITTEN_BASE | Set it to the written bytes if you want to count written bytes from a non zero value. Otherwise set it to 0 |
+| CPU_CORES | Set it to the number of CPU cores on your machine |
 
 
 ### Step 1: Create the environment file/s  
@@ -81,6 +82,7 @@ export INFLUX_ORGANIZATION="influx_organization"
 export INFLUX_BUCKET="influx_bucket"
 export INFLUX_TOKEN="influx_token"
 export HOST_TAG="measurements_host_tag"
+export CPU_CORES="6"
 
 python3 /home/scripts/pve_temp_stats_to_influxdb2.py $*
 ````
