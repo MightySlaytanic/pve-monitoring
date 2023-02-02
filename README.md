@@ -91,6 +91,22 @@ Edit the 'export' lines to you the variables that are applicable to your environ
 ### Step 2: Create the script files
 Taking from this repository, create the two python files, `pve_disks_stats_to_influxdb2.py` & `pve_temp_stats_to_influxdb2.py` on your system, on the paths used in your environment files/scripts.  
 
+#### Important: Customise for your configuration  
+The Python files themselves need to be updated for your specific configuration to work, specifically - 
+##### pve_disks_stats_to_influxdb2.py
+Customize lines 25 & 26, to relect the name of your disks.  
+You can get these by running `lsblk` and noting the disk names.  
+
+##### pve_temp_stats_to_influxdb2.py
+Customize - 
+* Line 41 - `coretemp-isa-0000` to to the name of your core temp sensor.
+* Line 43 - `range(0,4)`, specifically the `4` to the number of physical CPU cores you have.
+* Line 44 - `coretemp-isa-0000` to to the name of your core temp sensor.
+* Line 46 - `pch_cannonlake-virtual-0` to the name of your chipset sensor.
+* Line 47 - Comment out if there are no ACPI devices detected.
+* Line 48 - `int(data["nvme-pci-0100"]` to the name of your NVME device
+You can get these values by running `sensors` on the CLI.
+
 ### Step 3: Make the files executable  
 (from your scripts directory) -  
 `chmod +x ./*.sh`  
