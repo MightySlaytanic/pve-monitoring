@@ -7,3 +7,4 @@
 ## Contributors
 
   * boomam <https://github.com/boomam>
+      - Improvements to README.md
