@@ -18,6 +18,7 @@ INFLUX_TOKEN = getenv("INFLUX_TOKEN")
 INFLUX_ORGANIZATION = getenv("INFLUX_ORGANIZATION")
 INFLUX_BUCKET = getenv("INFLUX_BUCKET")
 HOST = getenv("HOST_TAG")
+CPU_CORES = getenv("CPU_CORES")
 
 CORE_OFFSET=2
 
@@ -40,7 +41,7 @@ if __name__ == '__main__':
 
     stats["cpu-package"] = int(data["coretemp-isa-0000"]["Package id 0"]["temp1_input"])  
 
-    for index in range(0,6):
+    for index in range(0,CPU_CORES):
         stats[f"core{index}"] = int(data["coretemp-isa-0000"][f"Core {index}"][f"temp{index+CORE_OFFSET}_input"])
 
     stats["pch"] = int(data["pch_cannonlake-virtual-0"]["temp1"]["temp1_input"])
