@@ -198,4 +198,5 @@ You can also add alarms to warn you about high temperatures, low disk space avai
 PVE to upload data to influxdb2 too, in order to have a complete set of data like cpu, memory and disk usage. It can
 be setup from GUI under Server View -> Datacenter -> Metric Server.
 
-![image](./Proxmox%20VE%20Grafana%20Dashboard%20Example.png)
+![image](./grafana/Proxmox%20VE%20Grafana%20Dashboard%20Example.png)
+(I've uploaded the [json source](./grafana/pve_grafana_dashboard.json) for the above dashboard in grafana folder)
