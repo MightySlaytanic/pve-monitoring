@@ -50,6 +50,8 @@ You can either set these directly in Bash (below #1), or directly editing each s
 | DATA_UNITS_READ_BASE | Set it to the read bytes if you want to count read bytes from a non zero value. Otherwise set it to 0. Ex: 300_000_000_000 is 300GB |
 | DATA_UNITS_WRITTEN_BASE | Set it to the written bytes if you want to count written bytes from a non zero value. Otherwise set it to 0 |
 | CPU_CORES | Set it to the number of CPU cores on your machine |
+| SATA_DISKS | Comma-separated list of sata disk paths |
+| NVME_DISKS | Comma-separated list of nvme disk paths |
 
 ### Step 1: Create the environment file/s
 
@@ -64,6 +66,8 @@ export INFLUX_ORGANIZATION="influx_organization"
 export INFLUX_BUCKET="influx_bucket"
 export INFLUX_TOKEN="influx_token"
 export HOST_TAG="measurements_host_tag"
+export SATA_DISKS="/dev/sda,/dev/sdb"
+export NVME_DISKS="/dev/nvme0,/dev/nvme1"
 
 # I've introduced the following variables since my NVME disk was bought from another person 
 # and had a lot of read/written TBs.
