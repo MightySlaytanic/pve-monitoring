@@ -8,7 +8,7 @@ Proxmox VE temperature and disk-health stats upload to influxdb2
 The script requires the module influxdb-client to be installed on your PVE hosts, with pip:
 
 ```bash
-apt install pip lmsensors smartctl -y
+apt install pip lmsensors smartctl nvme-cli -y
 pip install influxdb-client
 ```
 And a functioning InfluxDB v2 instance hosted on your local LAN.  
@@ -23,7 +23,7 @@ At present time only one disk per type is supported (you can not add a second SA
 
 ## pve_temp_stats_to_influxdb2.py
 
-This script uses the lm_sensors command to retrieve temperature info from the device. It has ben tailored for the output of the command executed on an Intel NUC i7 10th Gen device, so it may not work for your device without proper changes to the code
+This script uses the lm_sensors command to retrieve temperature info from the device. It has been tailored for the output of the command executed on an Intel NUC i7 10th Gen device, so it may not work for your device without proper changes to the code
 
 ## Usage
 ### Run location
