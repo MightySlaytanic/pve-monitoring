@@ -20,12 +20,13 @@ INFLUX_BUCKET = getenv("INFLUX_BUCKET")
 HOST = getenv("HOST_TAG")
 DATA_UNITS_READ_BASE = int(getenv("DATA_UNITS_READ_BASE"))
 DATA_UNITS_WRITTEN_BASE = int(getenv("DATA_UNITS_WRITTEN_BASE"))
-
-DEVICES = {
-    "nvme" : ["/dev/nvme0"],
-    "sata" : ["/dev/sda", "/dev/sdb", "/dev/sdc"],
-}
-
+SATA_DISKS = getenv("SATA_DISKS").split(',')                                                                                        
+NVME_DISKS = getenv("NVME_DISKS").split(',')                                                                                        
+                                                                                                                                    
+DEVICES = {                                                                                                                         
+    "nvme" : NVME_DISKS,                                                                                                            
+    "sata" : SATA_DISKS,                                                                                                            
+}        
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(usage="PVE Disks Stats to influxdb2 uploader")
