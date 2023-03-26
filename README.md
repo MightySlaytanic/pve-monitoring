@@ -1,7 +1,8 @@
 # pve-monitoring
+
 Proxmox VE temperature and disk-health stats upload to influxdb2
 
-**DISCLAIMER**: this tool has been developed to monitor my own Intel NUC with a SATA and an NVME disk. You can freely use and modify it to your needs, but I hold no responsibility if not used properly. 
+**DISCLAIMER**: this tool has been developed to monitor my own Intel NUC with a SATA and an NVME disk. You can freely use and modify it to your needs, but I hold no responsibility if not used properly.
 
 ## Requirements
 
@@ -11,6 +12,7 @@ The script requires the module influxdb-client to be installed on your PVE hosts
 apt install pip lmsensors smartctl nvme-cli -y
 pip install influxdb-client
 ```
+
 And a functioning InfluxDB v2 instance hosted on your local LAN.  
 
 # Script Overview
@@ -18,21 +20,23 @@ And a functioning InfluxDB v2 instance hosted on your local LAN.
 ## pve_disks_stats_to_influxdb2.py
 
 This script retrieves data from sata disks using smartctl and from nvme disks via nvmcli tools.
-You can modify the DEVICES dictionary by changing the path of the sata or nvme disk or by removing one of the two entries.
-At present time only one disk per type is supported (you can not add a second SATA or NVME disk without changing the code.
+You can modify the DEVICES dictionary by changing the path of the sata or nvme disk or by removing one of the two entries. Multiple disks per device type are supported by adding the device path to the array.
 
 ## pve_temp_stats_to_influxdb2.py
 
 This script uses the lm_sensors command to retrieve temperature info from the device. It has been tailored for the output of the command executed on an Intel NUC i7 10th Gen device, so it may not work for your device without proper changes to the code
 
 ## Usage
+
 ### Run location
+
 You will need to create these scripts on each host in your PVE cluster (or on your singular host).
 This location will be used throughout this guide for variable replacements.
 For the purpose of this guide, we will assume `/home/scripts`, make sure you are replacing this particular path with your path of choice.
 
 ### Variables
-Both tools requires you to set some environment variables 
+
+Both tools requires you to set some environment variables
 You can either set these directly in Bash (below #1), or directly editing each script (further below #2)
 
 | Variable | What to input |
@@ -47,9 +51,10 @@ You can either set these directly in Bash (below #1), or directly editing each s
 | DATA_UNITS_WRITTEN_BASE | Set it to the written bytes if you want to count written bytes from a non zero value. Otherwise set it to 0 |
 | CPU_CORES | Set it to the number of CPU cores on your machine |
 
+### Step 1: Create the environment file/s
 
-### Step 1: Create the environment file/s  
-`nano /home/scripts/pve_disks_stats_to_influxdb2.sh`  
+`nano /home/scripts/pve_disks_stats_to_influxdb2.sh`
+
 ````bash
 #!/bin/bash
 
@@ -70,9 +75,11 @@ export DATA_UNITS_WRITTEN_BASE="0"
 
 python3 /home/scripts/pve_disks_stats_to_influxdb2.py $*
 ````
+
 Edit the 'export' lines to you the variables that are applicable to your environment.  
 
-`nano /home/scripts/pve_temp_stats_to_influxdb2.sh`    
+`nano /home/scripts/pve_temp_stats_to_influxdb2.sh`
+
 ````bash
 #!/bin/bash
 
@@ -86,21 +93,27 @@ export CPU_CORES="6"
 
 python3 /home/scripts/pve_temp_stats_to_influxdb2.py $*
 ````
+
 Edit the 'export' lines to you the variables that are applicable to your environment.  
 
 ### Step 2: Create the script files
+
 Taking from this repository, create the two python files, `pve_disks_stats_to_influxdb2.py` & `pve_temp_stats_to_influxdb2.py` on your system, on the paths used in your environment files/scripts.  
 
-### Step 3: Make the files executable  
+### Step 3: Make the files executable
+
 (from your scripts directory) -  
 `chmod +x ./*.sh`  
 
 ### Step 4: Dry Run
+
 This is an important step, to allow you to DRY-RUN: see the what the scripts will upload to influxdb2.  
 
-Both scripts (and also both wrappers) can be launched with *-t* flag, in order to print the collected data (*measurements*) 
+Both scripts (and also both wrappers) can be launched with *-t* flag, in order to print the collected data (*measurements*)
 that will be uploaded to influxdb2.
+
 #### Example Output - Disk Stats
+
 - pve_disks_stats_to_influxdb2.sh
 
 ```bash
@@ -170,7 +183,9 @@ Measurements for host pve
     }
 ]
 ```
+
 #### Example Output - System Temperatures
+
 - pve_temp_stats_to_influxdb2.sh
 
 ```bash
@@ -213,6 +228,7 @@ I've put the two scripts in the following */etc/cron.d/influx_stats* crontab fil
 ```
 
 ### Step 6: Grafana Dashboard
+
 Once you have your data on influxdb2, you can build your Grafana Dashboard and keep an eye on the health of your PVE box.  
 You can also add alarms to warn you about high temperatures, low disk space available etc. Remember to configure your PVE to upload data to influxdb2 too, in order to have a complete set of data like cpu, memory and disk usage. It can be setup from GUI under Server View -> Datacenter -> Metric Server.  
 

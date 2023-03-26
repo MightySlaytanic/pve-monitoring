@@ -22,8 +22,8 @@ DATA_UNITS_READ_BASE = int(getenv("DATA_UNITS_READ_BASE"))
 DATA_UNITS_WRITTEN_BASE = int(getenv("DATA_UNITS_WRITTEN_BASE"))
 
 DEVICES = {
-    "nvme" : "/dev/nvme0",
-    "sata" : "/dev/sda",
+    "nvme" : ["/dev/nvme0"],
+    "sata" : ["/dev/sda", "/dev/sdb", "/dev/sdc"],
 }
 
 
@@ -40,69 +40,70 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     measurements = []
-    for devtype, devpath in DEVICES.items():
+    for devtype, devicelist in DEVICES.items():
+        for devpath in devicelist:
+            if devtype == "nvme":
+                stats = {}
+                output = run([f"/usr/sbin/nvme smart-log {devpath}"], stdout=PIPE, stderr=None, text=True, shell=True).stdout.split("\n")
 
-        if devtype == "nvme":
-            stats = {}
-            output = run([f"/usr/sbin/nvme smart-log {devpath}"], stdout=PIPE, stderr=None, text=True, shell=True).stdout.split("\n")
+                for line in output:
+                    if len(line) > 0:
+                        match_found = re.match(r".*Smart Log.*|^[^_]+$", line)
+                        temperature_found = re.match(r".*temperature.*", line)
 
-            for line in output:
-                if len(line) > 0:
-                    match_found = re.match(r".*Smart Log.*|^[^_]+$", line)
-                    temperature_found = re.match(r".*temperature.*", line)
+                        if not match_found or temperature_found:
+                            key, value = line.strip().split(":")
+                            key = key.strip()
+                            value = value.strip().replace(",","")
+                            value = value.strip().replace("%","")
 
-                    if not match_found or temperature_found:
-                        key, value = line.strip().split(":")
-                        key = key.strip()
-                        value = value.strip().replace(",","")
-                        value = value.strip().replace("%","")
+                            if temperature_found:
+                                value, _ = value.split(" ") 
+                            
+                            if value.isnumeric():
+                                value = int(value)
 
-                        if temperature_found:
-                            value, _ = value.split(" ") 
-                        
-                        if value.isnumeric():
-                            value = int(value)
+                            match_found = re.match(r"data_units_read|data_units_written",key)
 
-                        match_found = re.match(r"data_units_read|data_units_written",key)
+                            if match_found:
+                                # data_units_read/written is in thousands of 512 bytes blocks
+                                value = value * 512000
 
-                        if match_found:
-                            # data_units_read/written is in thousands of 512 bytes blocks
-                            value = value * 512000
+                                if key == "data_units_read":
+                                    stats["data_units_read_from_day1"] = value
+                                    value = value - DATA_UNITS_READ_BASE
 
-                            if key == "data_units_read":
-                                stats["data_units_read_from_day1"] = value
-                                value = value - DATA_UNITS_READ_BASE
+                                if key == "data_units_written":
+                                    stats["data_units_written_from_day1"] = value
+                                    value = value - DATA_UNITS_WRITTEN_BASE
+                            
+                            stats[key.lower()] = value
 
-                            if key == "data_units_written":
-                                stats["data_units_written_from_day1"] = value
-                                value = value - DATA_UNITS_WRITTEN_BASE
-                        
-                        stats[key.lower()] = value
+                measurements.append({
+                    "measurement": "disks",
+                    "tags": {"host": HOST, "devtype": devtype, "devpath": devpath},
+                    "fields": stats
+                })
 
-            measurements.append({
-                "measurement": "disks",
-                "tags": {"host": HOST, "devtype": devtype, "devpath": devpath},
-                "fields": stats
-            })
+            elif devtype == "sata":
+                stats = {}
+                output = run([f"/usr/sbin/smartctl -A {devpath}"], stdout=PIPE, stderr=None, text=True, shell=True).stdout.split("\n")
 
-        elif devtype == "sata":
-            stats = {}
-            output = run([f"/usr/sbin/smartctl -A {devpath}"], stdout=PIPE, stderr=None, text=True, shell=True).stdout.split("\n")
+                for line in output:
+                    if len(line) > 0:
+                        # Line sample:
+                        #   1 Raw_Read_Error_Rate     0x002f   100   100   000    Pre-fail  Always       -       0
+                        match_found = re.match(r"^\s*[0-9]+\s+([^\s]+).*\s-\s+([^\s]+).*", line)
 
-            for line in output:
-                if len(line) > 0:
-                    # Line sample:
-                    #   1 Raw_Read_Error_Rate     0x002f   100   100   000    Pre-fail  Always       -       0
-                    match_found = re.match(r"^\s*[0-9]+\s+([^\s]+).*\s-\s+([^\s]+).*", line)
+                        if match_found and match_found.group(2).isdigit():
+                            stats[match_found.group(1).lower()] = int(match_found.group(2))
 
-                    if match_found:
-                        stats[match_found.group(1).lower()] = int(match_found.group(2))
 
-            measurements.append({
-                "measurement": "disks",
-                "tags": {"host": HOST, "devtype": devtype, "devpath": devpath},
-                "fields": stats
-            })
+                measurements.append({
+                    "measurement": "disks",
+                    "tags": {"host": HOST, "devtype": devtype, "devpath": devpath},
+                    "fields": stats
+                })
 
     if args.test:
         print(f"\nMeasurements for host {HOST}")
