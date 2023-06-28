@@ -10,31 +10,46 @@ The script requires the module influxdb-client to be installed on your PVE hosts
 
 ```bash
 apt install pip lmsensors smartctl nvme-cli -y
+
+# If the following fails, read the next section about Python Virtual environment
 pip install influxdb-client
 ```
 
 And a functioning InfluxDB v2 instance hosted on your local LAN.  
 
-# Script Overview
+### Installing python modules in a Python Virtual Environment
 
-## pve_disks_stats_to_influxdb2.py
+**UPDATE 2023-06-28: if you're running on a Debian 12 system, you are required to create a python virtual environment with influxdb-client installed and then point at the python3 executable within that environment. For example, to create the virtual-env in /root/scripts/venv and install the required package do the following:
+
+```bash
+python3 -m venv /root/scripts/venv
+. /root/scripts/venv/bin/activate
+pip3 install influxdb-client
+deactivate
+```
+
+Then, invoke the python script by passing it as an argument to /root/scripts/venv/bin/python3 executable or thange the shabang string on the first line of the script.
+
+## Script Overview
+
+### pve_disks_stats_to_influxdb2.py
 
 This script retrieves data from sata disks using smartctl and from nvme disks via nvmcli tools.
 You can modify the DEVICES dictionary by changing the path of the sata or nvme disk or by removing one of the two entries. Multiple disks per device type are supported by adding the device path to the array.
 
-## pve_temp_stats_to_influxdb2.py
+### pve_temp_stats_to_influxdb2.py
 
 This script uses the lm_sensors command to retrieve temperature info from the device. It has been tailored for the output of the command executed on an Intel NUC i7 10th Gen device, so it may not work for your device without proper changes to the code
 
-## Usage
+### Usage
 
-### Run location
+#### Run location
 
 You will need to create these scripts on each host in your PVE cluster (or on your singular host).
 This location will be used throughout this guide for variable replacements.
 For the purpose of this guide, we will assume `/home/scripts`, make sure you are replacing this particular path with your path of choice.
 
-### Variables
+#### Variables
 
 Both tools requires you to set some environment variables
 You can either set these directly in Bash (below #1), or directly editing each script (further below #2)
@@ -53,11 +68,11 @@ You can either set these directly in Bash (below #1), or directly editing each s
 | SATA_DISKS | Comma-separated list of sata disk paths |
 | NVME_DISKS | Comma-separated list of nvme disk paths |
 
-### Step 1: Create the environment file/s
+#### Step 1: Create the environment file/s
 
 `nano /home/scripts/pve_disks_stats_to_influxdb2.sh`
 
-````bash
+```bash
 #!/bin/bash
 
 export INFLUX_HOST="influx_IP_or_DNS"
@@ -77,8 +92,12 @@ export NVME_DISKS="/dev/nvme0,/dev/nvme1"
 export DATA_UNITS_READ_BASE="0"
 export DATA_UNITS_WRITTEN_BASE="0"
 
-python3 /home/scripts/pve_disks_stats_to_influxdb2.py $*
-````
+# Debian 11 without Python Virtual Environment
+# python3 /home/scripts/pve_disks_stats_to_influxdb2.py $*
+
+# Debian 12 with Python Virtual Environment in /path/to/venv
+/path/to/venv/bin/python3 /home/scripts/pve_disks_stats_to_influxdb2.py $*
+```
 
 Edit the 'export' lines to you the variables that are applicable to your environment.  
 
@@ -95,28 +114,32 @@ export INFLUX_TOKEN="influx_token"
 export HOST_TAG="measurements_host_tag"
 export CPU_CORES="6"
 
-python3 /home/scripts/pve_temp_stats_to_influxdb2.py $*
+# Debian 11 without Python Virtual Environment
+# python3 /home/scripts/pve_temp_stats_to_influxdb2.py $*
+
+# Debian 12 with Python Virtual Environment in /path/to/venv
+/path/to/venv/bin/python3 /home/scripts/pve_temp_stats_to_influxdb2.py $*
 ````
 
 Edit the 'export' lines to you the variables that are applicable to your environment.  
 
-### Step 2: Create the script files
+#### Step 2: Create the script files
 
 Taking from this repository, create the two python files, `pve_disks_stats_to_influxdb2.py` & `pve_temp_stats_to_influxdb2.py` on your system, on the paths used in your environment files/scripts.  
 
-### Step 3: Make the files executable
+#### Step 3: Make the files executable
 
 (from your scripts directory) -  
 `chmod +x ./*.sh`  
 
-### Step 4: Dry Run
+#### Step 4: Dry Run
 
 This is an important step, to allow you to DRY-RUN: see the what the scripts will upload to influxdb2.  
 
 Both scripts (and also both wrappers) can be launched with *-t* flag, in order to print the collected data (*measurements*)
 that will be uploaded to influxdb2.
 
-#### Example Output - Disk Stats
+##### Example Output - Disk Stats
 
 - pve_disks_stats_to_influxdb2.sh
 
@@ -188,7 +211,7 @@ Measurements for host pve
 ]
 ```
 
-#### Example Output - System Temperatures
+##### Example Output - System Temperatures
 
 - pve_temp_stats_to_influxdb2.sh
 
@@ -219,7 +242,7 @@ Measurements for host pve
 ]
 ```
 
-### Step 5: Scheduling data upload
+#### Step 5: Scheduling data upload
 
 I've put the two scripts in the following */etc/cron.d/influx_stats* crontab file in order to upload stats every minute:
 
@@ -231,7 +254,7 @@ I've put the two scripts in the following */etc/cron.d/influx_stats* crontab fil
 * * * * * root /home/scripts/pve_temp_stats_to_influxdb2.sh >/dev/null 2>&1
 ```
 
-### Step 6: Grafana Dashboard
+#### Step 6: Grafana Dashboard
 
 Once you have your data on influxdb2, you can build your Grafana Dashboard and keep an eye on the health of your PVE box.  
 You can also add alarms to warn you about high temperatures, low disk space available etc. Remember to configure your PVE to upload data to influxdb2 too, in order to have a complete set of data like cpu, memory and disk usage. It can be setup from GUI under Server View -> Datacenter -> Metric Server.  
