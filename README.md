@@ -19,7 +19,7 @@ And a functioning InfluxDB v2 instance hosted on your local LAN.
 
 ### Installing python modules in a Python Virtual Environment
 
-**UPDATE 2023-06-28: if you're running on a Debian 12 system, you are required to create a python virtual environment with influxdb-client installed and then point at the python3 executable within that environment. For example, to create the virtual-env in /root/scripts/venv and install the required package do the following:
+**UPDATE 2023-06-28**: if you're running on a Debian 12 system, you are required to create a python virtual environment with influxdb-client installed and then point at the python3 executable within that environment. For example, to create the virtual-env in /root/scripts/venv and install the required package do the following:
 
 ```bash
 python3 -m venv /root/scripts/venv
