@@ -1,4 +1,18 @@
-#!/usr/bin/python3
+#!/root/scripts/venv/bin/python3
+
+# Note about python shabang string above: if you're running on a Debian 11
+# system use the standard "#!/usr/bin/python3" string while if you are on
+# a Debian 12 system you need to create a virtual-env with influxdb_client
+# and use the shabang string pointing to the python3 interpreter within
+# the virtual-env, such as "#!/root/scripts/venv/bin/python3"
+#
+# For example, to create the virtual-env in /root/scripts/venv and install
+# the required package do the following:
+#
+# python3 -m venv /root/scripts/venv
+# . /root/scripts/venv/bin/activate
+# pip3 install influxdb-client
+# deactivate
 
 import re
 import sys

@@ -1,4 +1,18 @@
-#!/usr/bin/python3
+#!/root/scripts/venv/bin/python3
+
+# Note about python shabang string above: if you're running on a Debian 11
+# system use the standard "#!/usr/bin/python3" string while if you are on
+# a Debian 12 system you need to create a virtual-env with influxdb_client
+# and use the shabang string pointing to the python3 interpreter within
+# the virtual-env, such as "#!/root/scripts/venv/bin/python3"
+#
+# For example, to create the virtual-env in /root/scripts/venv and install
+# the required package do the following:
+#
+# python3 -m venv /root/scripts/venv
+# . /root/scripts/venv/bin/activate
+# pip3 install influxdb-client
+# deactivate
 
 import re
 import sys
@@ -49,6 +63,8 @@ if __name__ == '__main__':
 
                 for line in output:
                     if len(line) > 0:
+                        line = line.replace("Data Units Read","data_units_read")
+                        line = line.replace("Data Units Written","data_units_written")
                         match_found = re.match(r".*Smart Log.*|^[^_]+$", line)
                         temperature_found = re.match(r".*temperature.*", line)
 
@@ -56,10 +72,17 @@ if __name__ == '__main__':
                             key, value = line.strip().split(":")
                             key = key.strip()
                             value = value.strip().replace(",","")
-                            value = value.strip().replace("%","")
+                            value = value.replace("%","")
+                            # Remove excessive data after the numeric value
+                            value, *_ = value.split(" ")
 
                             if temperature_found:
-                                value, _ = value.split(" ") 
+                                match_temp_value = re.match(r"(\d+).*", value)
+
+                                if match_temp_value:
+                                  value = match_temp_value.group(1) 
+                                else:
+                                  value = -1
                             
                             if value.isnumeric():
                                 value = int(value)
