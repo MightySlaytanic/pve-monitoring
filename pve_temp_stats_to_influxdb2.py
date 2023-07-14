@@ -36,6 +36,15 @@ CPU_CORES = int(getenv("CPU_CORES"))
 
 CORE_OFFSET=2
 
+CORETEMP_NAME = getenv("CORETEMP_NAME")
+PCH_INFO = getenv("PCH_INFO").split(':')
+ACPITZ_INFO = getenv("ACPITZ_INFO").split(':')
+
+NVME_INFO = []
+for nvme_item in getenv("NVME_INFO").split(','):
+    NVME_INFO.append(nvme_item.split(':'))
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(usage="PVE Sensors Stats to influxdb2 uploader")
 
@@ -53,14 +62,21 @@ if __name__ == '__main__':
 
     data = json.loads(run(["/usr/bin/sensors -j"], stdout=PIPE, stderr=None, text=True, shell=True).stdout)
 
-    stats["cpu-package"] = int(data["coretemp-isa-0000"]["Package id 0"]["temp1_input"])  
+    stats["cpu-package"] = int(data[CORETEMP_NAME]["Package id 0"]["temp1_input"])  
 
     for index in range(0,CPU_CORES):
-        stats[f"core{index}"] = int(data["coretemp-isa-0000"][f"Core {index}"][f"temp{index+CORE_OFFSET}_input"])
+        stats[f"core{index}"] = int(data[CORETEMP_NAME][f"Core {index}"][f"temp{index+CORE_OFFSET}_input"])
 
-    stats["pch"] = int(data["pch_cannonlake-virtual-0"]["temp1"]["temp1_input"])
-    stats["acpitz"] = int(data["acpitz-acpi-0"]["temp2"]["temp2_input"])
-    stats["nvme-pci"] = int(data["nvme-pci-3a00"]["Composite"]["temp1_input"])
+    if PCH_INFO[0]: 
+        stats[PCH_INFO[0]] = int(data[PCH_INFO[1]][PCH_INFO[2]][PCH_INFO[3]])
+
+    if ACPITZ_INFO[0]: 
+        stats[ACPITZ_INFO[0]] = int(data[ACPITZ_INFO[1]][ACPITZ_INFO[2]][ACPITZ_INFO[3]])
+
+    if NVME_INFO[0]:
+        for nvme_item in NVME_INFO:
+            if nvme_item[0]:
+                stats[nvme_item[0]] = int(data[nvme_item[1]][nvme_item[2]][nvme_item[3]])
 
     measurements.append({
         "measurement": "temp",

@@ -67,6 +67,10 @@ You can either set these directly in Bash (below #1), or directly editing each s
 | CPU_CORES | Set it to the number of CPU cores on your machine |
 | SATA_DISKS | Comma-separated list of sata disk paths |
 | NVME_DISKS | Comma-separated list of nvme disk paths |
+| PCH_INFO | PCH-related column-separated info in sensors output (see example in pve_temp_stats_to_influxdb2.sh script below)
+| ACPITZ_INFO | PCH-related column-separated info in sensors output (see example in pve_temp_stats_to_influxdb2.sh script below)
+| NVME_INFO | NVME disks comma-separated list of column-separated info in sensors output (see example in pve_temp_stats_to_influxdb2.sh script below)
+| CORETEMP_NAME | CORETEMP value name in sensors output (see example in pve_temp_stats_to_influxdb2.sh script below)
 
 #### Step 1: Create the environment file/s
 
@@ -113,6 +117,29 @@ export INFLUX_BUCKET="influx_bucket"
 export INFLUX_TOKEN="influx_token"
 export HOST_TAG="measurements_host_tag"
 export CPU_CORES="6"
+
+# Execute "sensors -j" and then use the information to set the following environment variables.
+# In case some of them, like ACPITZ stuff, are not available, set them to ""
+# For example if you want the PCH temperature to be stored in a pch field and you see the following
+# within "sensors -j" output
+#   "pch_cannonlake-virtual-0":{
+#      "Adapter": "Virtual device",
+#      "temp1":{
+#         "temp1_input": 61.000
+#      }
+#   }
+# Set PCH_INFO as the following, by looking at the chain of values that lead to the temperature of PCH
+export PCH_INFO="pch:pch_cannonlake-virtual-0:temp1:temp1_input"
+
+# The same as above
+export ACPITZ_INFO="acpitz:acpitz-acpi-0:temp2:temp2_input"
+
+# The same as above, but if you have multiple nvme entries you can define them as below, using "," to 
+# separate the column-separated info of the different nvme disks
+export NVME_INFO="nvme:nvme-pci-3a00:Composite:temp1_input,nvme2:nvme-pci-xxxx:Composite:temp1_input"
+
+# This is simply the name of the coretemp-* value in "sensors -j" output
+export CORETEMP_NAME="coretemp-isa-0000"
 
 # Debian 11 without Python Virtual Environment
 # python3 /home/scripts/pve_temp_stats_to_influxdb2.py $*
