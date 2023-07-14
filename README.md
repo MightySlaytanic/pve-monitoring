@@ -32,7 +32,7 @@ pip3 install influxdb-client
 deactivate
 ```
 ##### Adjust 'python' in sh
-Then, invoke the python script by passing it as an argument to /root/scripts/venv/bin/python3 executable or thange the shabang string on the first line of the script.
+Then, invoke the python script by passing it as an argument to /root/scripts/venv/bin/python3 executable or change the shabang string on the first line of the script.
 You can do this by adjusting each *.sh file, to replace `python3` with the path you made, in this example `/root/scripts/venv/bin/python3`.  
 
 ## Script Overview
