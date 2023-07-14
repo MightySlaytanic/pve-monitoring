@@ -18,17 +18,22 @@ pip install influxdb-client
 And a functioning InfluxDB v2 instance hosted on your local LAN.  
 
 ### Installing python modules in a Python Virtual Environment
+#### UPDATE 2023-06-28
+If you're running on a Debian 12 system (such as proxmox v8), you are required to create a python virtual environment with influxdb-client installed and then point at the python3 executable within that environment.  
+For example, to create the virtual-env in /root/scripts/venv and install the required package do the following:
+##### Install python env
+`apt install python3-venv -y`
 
-**UPDATE 2023-06-28**: if you're running on a Debian 12 system, you are required to create a python virtual environment with influxdb-client installed and then point at the python3 executable within that environment. For example, to create the virtual-env in /root/scripts/venv and install the required package do the following:
-
+##### Configure python virtual environment
 ```bash
 python3 -m venv /root/scripts/venv
 . /root/scripts/venv/bin/activate
 pip3 install influxdb-client
 deactivate
 ```
-
+##### Adjust 'python' in sh
 Then, invoke the python script by passing it as an argument to /root/scripts/venv/bin/python3 executable or thange the shabang string on the first line of the script.
+You can do this by adjusting each *.sh file, to replace `python3` with the path you made, in this example `/root/scripts/venv/bin/python3`.  
 
 ## Script Overview
 
