@@ -152,8 +152,75 @@ export CORETEMP_NAME="coretemp-isa-0000"
 # Debian 12 with Python Virtual Environment in /path/to/venv
 /path/to/venv/bin/python3 /home/scripts/pve_temp_stats_to_influxdb2.py $*
 ````
-
 Edit the 'export' lines to you the variables that are applicable to your environment.  
+After running `sensors -j` you are specifically looking for the top level device as your 3-4 environment varibles to update.
+For example, with the output below, you would be looking for the lines commented, to enter as the variables.
+
+```
+root@node-01:~# sensors -j
+{
+   "pch_skylake-virtual-0":{    ### This is the name of your PCH.
+      "Adapter": "Virtual device",
+      "temp1":{
+         "temp1_input": 56.500
+      }
+   },
+   "nvme-pci-0100":{ ### This is the name of your NVME. You may have multiple.
+      "Adapter": "PCI adapter",
+      "Composite":{
+         "temp1_input": 47.850,
+         "temp1_max": 77.850,
+         "temp1_min": -20.150,
+         "temp1_crit": 81.850,
+         "temp1_alarm": 0.000
+      },
+      "Sensor 1":{
+         "temp2_input": 47.850,
+         "temp2_max": 65261.850,
+         "temp2_min": -273.150
+      }
+   },
+   "coretemp-isa-0000":{ ### This is the name of your CPU temperature sensor.
+      "Adapter": "ISA adapter",
+      "Package id 0":{
+         "temp1_input": 41.000,
+         "temp1_max": 84.000,
+         "temp1_crit": 100.000,
+         "temp1_crit_alarm": 0.000
+      },
+      "Core 0":{
+         "temp2_input": 39.000,
+         "temp2_max": 84.000,
+         "temp2_crit": 100.000,
+         "temp2_crit_alarm": 0.000
+      },
+      "Core 1":{
+         "temp3_input": 39.000,
+         "temp3_max": 84.000,
+         "temp3_crit": 100.000,
+         "temp3_crit_alarm": 0.000
+      },
+      "Core 2":{
+         "temp4_input": 39.000,
+         "temp4_max": 84.000,
+         "temp4_crit": 100.000,
+         "temp4_crit_alarm": 0.000
+      },
+      "Core 3":{
+         "temp5_input": 38.000,
+         "temp5_max": 84.000,
+         "temp5_crit": 100.000,
+         "temp5_crit_alarm": 0.000
+      }
+   }
+}
+```
+You would enter these in the format of -   
+* `NVME_INFO="nvme:<NAME-OF-NVME-SENSOR-1>:Composite:temp1_input,nvme2:<NAME-OF-NVME-SENSOR-1>:Composite:temp1_input"`  
+* `PCH_INFO="pch:<NAME-OF-PCH-SENSOR>:temp1:temp1_input"`  
+* `ACPITZ_INFO="<NAME-OF-ACPITZ-SENSOR>:temp2:temp2_input"`  
+* `CORETEMP_NAME="<NAME-OF-CPU-SENSOR>"`  
+In the scenario you have just one NVME, you can shorten the export to not include anything after the ','.  
 
 #### Step 2: Create the script files
 
