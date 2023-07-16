@@ -216,7 +216,7 @@ root@node-01:~# sensors -j
 }
 ```
 You would enter these in the format of -   
-* `NVME_INFO="nvme:<NAME-OF-NVME-SENSOR-1>:Composite:temp1_input,nvme2:<NAME-OF-NVME-SENSOR-1>:Composite:temp1_input"`  
+* `NVME_INFO="nvme:<NAME-OF-NVME-SENSOR-1>:Composite:temp1_input,nvme2:<NAME-OF-NVME-SENSOR-2>:Composite:temp1_input"`  
 * `PCH_INFO="pch:<NAME-OF-PCH-SENSOR>:temp1:temp1_input"`  
 * `ACPITZ_INFO="<NAME-OF-ACPITZ-SENSOR>:temp2:temp2_input"`  
 * `CORETEMP_NAME="<NAME-OF-CPU-SENSOR>"`  
