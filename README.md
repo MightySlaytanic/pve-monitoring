@@ -213,9 +213,19 @@ root@node-01:~# sensors -j
          "temp5_crit_alarm": 0.000
       }
    }
-}
+   "acpitz-acpi-0":{    ### This is the name of your ACPITZ sensor.
+         "Adapter": "ACPI interface",
+         "temp1":{
+            "temp1_input": -263.200
+         },
+         "temp2":{
+            "temp2_input": 70.000,   ### Choose the tempx_input value which has a non-negative number
+            "temp2_crit": 119.000
+         }
+      }
+   }
 ```
-You would enter these in the format of -   
+You would enter these in the format of:   
 * `NVME_INFO="nvme:<NAME-OF-NVME-SENSOR-1>:Composite:temp1_input,nvme2:<NAME-OF-NVME-SENSOR-2>:Composite:temp1_input"`  
 * `PCH_INFO="pch:<NAME-OF-PCH-SENSOR>:temp1:temp1_input"`  
 * `ACPITZ_INFO="<NAME-OF-ACPITZ-SENSOR>:temp2:temp2_input"`  
