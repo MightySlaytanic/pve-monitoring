@@ -62,10 +62,10 @@ if __name__ == '__main__':
 
     data = json.loads(run(["/usr/bin/sensors -j"], stdout=PIPE, stderr=None, text=True, shell=True).stdout)
 
-    stats["cpu-package"] = int(data[CORETEMP_NAME]["Package id 0"]["temp1_input"])  
-
-    for index in range(0,CPU_CORES):
-        stats[f"core{index}"] = int(data[CORETEMP_NAME][f"Core {index}"][f"temp{index+CORE_OFFSET}_input"])
+    if CORETEMP_NAME:
+        stats["cpu-package"] = int(data[CORETEMP_NAME]["Package id 0"]["temp1_input"])  
+        for index in range(0,CPU_CORES):
+            stats[f"core{index}"] = int(data[CORETEMP_NAME][f"Core {index}"][f"temp{index+CORE_OFFSET}_input"])
 
     if PCH_INFO[0]: 
         stats[PCH_INFO[0]] = int(data[PCH_INFO[1]][PCH_INFO[2]][PCH_INFO[3]])
