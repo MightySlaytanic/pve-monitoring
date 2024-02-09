@@ -88,7 +88,7 @@ You can either set these directly in Bash (below #1), or directly editing each s
 ```bash
 #!/bin/bash
 
-export INFLUX_HOST="influx_IP_or_DNS"
+export INFLUX_HOST="http[s]://influx_IP_or_DNS"
 export INFLUX_PORT="influx_PORT"
 export INFLUX_ORGANIZATION="influx_organization"
 export INFLUX_BUCKET="influx_bucket"
@@ -119,7 +119,7 @@ Edit the 'export' lines to you the variables that are applicable to your environ
 ````bash
 #!/bin/bash
 
-export INFLUX_HOST="influx_IP_or_DNS"
+export INFLUX_HOST="http[s]://influx_IP_or_DNS"
 export INFLUX_PORT="influx_PORT"
 export INFLUX_ORGANIZATION="influx_organization"
 export INFLUX_BUCKET="influx_bucket"
