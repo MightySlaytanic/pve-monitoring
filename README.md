@@ -61,7 +61,7 @@ You can either set these directly in Bash (below #1), or directly editing each s
 
 | Variable | What to input |
 | ----- | ----- |
-| INFLUX_HOST | The host URL _(example: https://name.domain.com)_ or IP _(example: 192.168.0.1)_ for your InfluxDb instance |
+| INFLUX_HOST | The host URL including https or http protocol specification _(example: https://name.domain.com)_ or IP _(example: http://192.168.0.1)_ for your InfluxDb instance |
 | INFLUX_PORT | The port for your InfluxDB instance |
 | INFLUX_TOKEN | The admin token for your InfluxDB instance |
 | INFLUX_ORGANIZATION | Your InfluxDB Org Name |
