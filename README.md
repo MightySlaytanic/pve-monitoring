@@ -4,6 +4,10 @@ Proxmox VE temperature and disk-health stats upload to influxdb2
 
 **DISCLAIMER**: this tool has been developed to monitor my own Intel NUC with a SATA and an NVME disk. You can freely use and modify it to your needs, but I hold no responsibility if not used properly.
 
+## Important notices
+
+*2024-02-09 Update:* there is a small *breaking change* in the INFLUXDB_HOST variable that you must pass to the script. Now you must specify http:// or https:// in front of the url or IP address of your influxdb host.
+
 ## Requirements
 
 The script requires the module influxdb-client to be installed on your PVE hosts, with pip:
@@ -61,7 +65,7 @@ You can either set these directly in Bash (below #1), or directly editing each s
 
 | Variable | What to input |
 | ----- | ----- |
-| INFLUX_HOST | The host URL or IP for your InfluxDb instance|
+| INFLUX_HOST | The host URL including https or http protocol specification _(example: https://name.domain.com)_ or IP _(example: http://192.168.0.1)_ for your InfluxDb instance |
 | INFLUX_PORT | The port for your InfluxDB instance |
 | INFLUX_TOKEN | The admin token for your InfluxDB instance |
 | INFLUX_ORGANIZATION | Your InfluxDB Org Name |

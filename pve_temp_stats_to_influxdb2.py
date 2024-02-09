@@ -89,7 +89,7 @@ if __name__ == '__main__':
         print(json.dumps(measurements, indent=4))
     else:
         try:
-            client = InfluxDBClient(url=f"http://{INFLUX_HOST}:{INFLUX_PORT}", token=INFLUX_TOKEN, org=INFLUX_ORGANIZATION, timeout=30000)
+            client = InfluxDBClient(url=f"{INFLUX_HOST}:{INFLUX_PORT}", token=INFLUX_TOKEN, org=INFLUX_ORGANIZATION, timeout=30000)
             write_api = client.write_api(write_options=SYNCHRONOUS)
 
             write_api.write(
