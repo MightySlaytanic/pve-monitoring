@@ -6,7 +6,7 @@ Proxmox VE temperature and disk-health stats upload to influxdb2
 
 ## Important notices
 
-*2024-02-09 Update:* there is a small *breaking change* in the INFLUXDB_HOST variable that you must pass to the script. Now you must specify http:// or https:// in front of the url or IP address of your influxdb host.
+**2024-02-09 Update:** there is a small *breaking change* in the INFLUXDB_HOST variable that you must pass to the script. Now you must specify *http://* or *https://* in front of the url or IP address of your influxdb host.
 
 ## Requirements
 
