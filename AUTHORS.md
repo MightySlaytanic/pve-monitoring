@@ -11,3 +11,6 @@
 
   * Tyler Brenneman <https://github.com/Tyler-Brenneman>
       - Improvements to Docs an Code
+   
+  * pcyan (err0r)
+      - Intel Hybrid Core support <https://github.com/pcyan>
