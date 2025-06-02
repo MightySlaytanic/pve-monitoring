@@ -193,28 +193,64 @@ root@node-01:~# sensors -j
          "temp1_crit_alarm": 0.000
       },
       "Core 0":{
-         "temp2_input": 39.000,
-         "temp2_max": 84.000,
+         "temp2_input": 20.000,
+         "temp2_max": 80.000,
          "temp2_crit": 100.000,
          "temp2_crit_alarm": 0.000
       },
-      "Core 1":{
-         "temp3_input": 39.000,
-         "temp3_max": 84.000,
+      "Core 4":{
+         "temp3_input": 16.000,
+         "temp3_max": 80.000,
          "temp3_crit": 100.000,
          "temp3_crit_alarm": 0.000
       },
-      "Core 2":{
-         "temp4_input": 39.000,
-         "temp4_max": 84.000,
+      "Core 8":{
+         "temp4_input": 19.000,
+         "temp4_max": 80.000,
          "temp4_crit": 100.000,
          "temp4_crit_alarm": 0.000
       },
-      "Core 3":{
-         "temp5_input": 38.000,
-         "temp5_max": 84.000,
+      "Core 12":{
+         "temp5_input": 21.000,
+         "temp5_max": 80.000,
          "temp5_crit": 100.000,
          "temp5_crit_alarm": 0.000
+      },
+      "Core 16":{
+         "temp6_input": 16.000,
+         "temp6_max": 80.000,
+         "temp6_crit": 100.000,
+         "temp6_crit_alarm": 0.000
+      },
+      "Core 20":{
+         "temp7_input": 17.000,
+         "temp7_max": 80.000,
+         "temp7_crit": 100.000,
+         "temp7_crit_alarm": 0.000
+      },
+      "Core 28":{
+         "temp8_input": 21.000,
+         "temp8_max": 80.000,
+         "temp8_crit": 100.000,
+         "temp8_crit_alarm": 0.000
+      },
+      "Core 29":{
+         "temp9_input": 21.000,
+         "temp9_max": 80.000,
+         "temp9_crit": 100.000,
+         "temp9_crit_alarm": 0.000
+      },
+      "Core 30":{
+         "temp10_input": 21.000,
+         "temp10_max": 80.000,
+         "temp10_crit": 100.000,
+         "temp10_crit_alarm": 0.000
+      },
+      "Core 31":{
+         "temp11_input": 21.000,
+         "temp11_max": 80.000,
+         "temp11_crit": 100.000,
+         "temp11_crit_alarm": 0.000
       }
    }
    "acpitz-acpi-0":{    ### This is the name of your ACPITZ sensor.
@@ -340,13 +376,17 @@ Measurements for host pve
             "service": "lm_sensors"
         },
         "fields": {
-            "cpu-package": 67,
-            "core0": 50,
-            "core1": 49,
-            "core2": 51,
-            "core3": 67,
-            "core4": 48,
-            "core5": 49,
+            "cpu-package": 29,
+            "core0": 21,
+            "core1": 16,
+            "core2": 29,
+            "core3": 18,
+            "core4": 26,
+            "core5": 17,
+            "core6": 21,
+            "core7": 22,
+            "core8": 22,
+            "core9": 22,
             "pch": 42,
             "acpitz": 49,
             "nvme-pci": 34

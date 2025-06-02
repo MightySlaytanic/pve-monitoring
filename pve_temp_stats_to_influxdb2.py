@@ -34,8 +34,6 @@ INFLUX_BUCKET = getenv("INFLUX_BUCKET")
 HOST = getenv("HOST_TAG")
 CPU_CORES = int(getenv("CPU_CORES"))
 
-CORE_OFFSET=2
-
 CORETEMP_NAME = getenv("CORETEMP_NAME")
 PCH_INFO = getenv("PCH_INFO").split(':')
 ACPITZ_INFO = getenv("ACPITZ_INFO").split(':')
@@ -64,8 +62,13 @@ if __name__ == '__main__':
 
     if CORETEMP_NAME:
         stats["cpu-package"] = int(data[CORETEMP_NAME]["Package id 0"]["temp1_input"])  
-        for index in range(0,CPU_CORES):
-            stats[f"core{index}"] = int(data[CORETEMP_NAME][f"Core {index}"][f"temp{index+CORE_OFFSET}_input"])
+        index = 0
+        for cpu_item in data[CORETEMP_NAME]:
+            if "Core" in cpu_item:
+                for cpu_temp_item in data[CORETEMP_NAME][cpu_item]:
+                    if "input" in cpu_temp_item:
+                        stats[f"core{index}"] = int(data[CORETEMP_NAME][cpu_item][cpu_temp_item])
+                index+=1
 
     if PCH_INFO[0]: 
         stats[PCH_INFO[0]] = int(data[PCH_INFO[1]][PCH_INFO[2]][PCH_INFO[3]])
